@@ -1,0 +1,11 @@
+# Hook pattern file — never committed
+.githooks/.blocked
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db

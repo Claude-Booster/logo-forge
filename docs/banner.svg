@@ -1,0 +1,195 @@
+<svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" width="900" height="200">
+  <defs>
+    <style>
+      /* ── Grid construction lines ── */
+      .g-h, .g-v {
+        stroke: #E8960F;
+        stroke-width: 0.5;
+        stroke-dasharray: 3 4;
+        opacity: 0;
+        animation: gridIn 0.7s 0.1s ease-out forwards;
+      }
+      .g-v { animation-delay: 0.2s; }
+
+      /* ── Φ construction circles ── */
+      .phi {
+        fill: none;
+        stroke: #E8960F;
+        stroke-width: 0.5;
+        stroke-dasharray: 4 5;
+        opacity: 0;
+        animation: gridIn 0.6s 0.5s ease-out forwards;
+      }
+      .phi-2 { animation-delay: 0.7s; }
+      .phi-3 { animation-delay: 0.9s; }
+
+      /* ── LF monogram strokes ── */
+      .mk {
+        fill: none;
+        stroke: #E8960F;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 9;
+      }
+      .mk-L  { stroke-dasharray: 110; stroke-dashoffset: 110; animation: draw 0.9s 1.0s cubic-bezier(0.4,0,0.2,1) forwards; }
+      .mk-Fv { stroke-dasharray: 70;  stroke-dashoffset: 70;  animation: draw 0.6s 1.8s cubic-bezier(0.4,0,0.2,1) forwards; }
+      .mk-Ft { stroke-dasharray: 40;  stroke-dashoffset: 40;  animation: draw 0.35s 2.3s cubic-bezier(0.4,0,0.2,1) forwards; }
+      .mk-Fm { stroke-dasharray: 30;  stroke-dashoffset: 30;  animation: draw 0.25s 2.55s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+      /* ── Divider ── */
+      .div-line {
+        stroke: #E8960F;
+        stroke-width: 1;
+        stroke-opacity: 0.35;
+        transform-origin: 228px 100px;
+        transform: scaleY(0);
+        animation: scaleIn 0.4s 2.8s ease-out forwards;
+      }
+
+      /* ── Right-panel text ── */
+      .t-title    { opacity: 0; animation: slideUp 0.55s 2.9s ease-out forwards; }
+      .t-sub      { opacity: 0; animation: slideUp 0.5s  3.3s ease-out forwards; }
+      .t-tags     { opacity: 0; animation: slideUp 0.5s  3.7s ease-out forwards; }
+
+      /* ── Tiny amber pips ── */
+      .pip { opacity: 0; }
+      .pip-1 { animation: pipIn 0.3s 3.75s forwards; }
+      .pip-2 { animation: pipIn 0.3s 3.85s forwards; }
+      .pip-3 { animation: pipIn 0.3s 3.95s forwards; }
+
+      /* ── Corner bracket accents ── */
+      .bracket {
+        fill: none;
+        stroke: #E8960F;
+        stroke-width: 1.5;
+        stroke-opacity: 0;
+        animation: gridIn 0.4s 4.1s forwards;
+      }
+
+      /* ── Keyframes ── */
+      @keyframes gridIn   { to { opacity: 0.3; } }
+      @keyframes draw     { to { stroke-dashoffset: 0; } }
+      @keyframes scaleIn  { to { transform: scaleY(1); } }
+      @keyframes slideUp  {
+        from { opacity: 0; transform: translateY(7px); }
+        to   { opacity: 1; transform: translateY(0);   }
+      }
+      @keyframes pipIn    { to { opacity: 1; } }
+    </style>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="900" height="200" fill="#0D0D14"/>
+  <!-- Outer border -->
+  <rect x="0.5" y="0.5" width="899" height="199" fill="none"
+        stroke="#E8960F" stroke-width="1" stroke-opacity="0.15"/>
+
+  <!-- ═══════════════════════════════════════════════════
+       LEFT PANEL  (0–215)  —  construction + mark
+  ════════════════════════════════════════════════════ -->
+
+  <!-- Module grid  m=10, mark occupies x:60-150, y:60-130 -->
+  <!-- Horizontal construction lines -->
+  <line class="g-h" x1="45" y1="60"  x2="165" y2="60"/>
+  <line class="g-h" x1="45" y1="70"  x2="165" y2="70"/>
+  <line class="g-h" x1="45" y1="80"  x2="165" y2="80"/>
+  <line class="g-h" x1="45" y1="90"  x2="165" y2="90"/>
+  <line class="g-h" x1="45" y1="100" x2="165" y2="100"/>
+  <line class="g-h" x1="45" y1="110" x2="165" y2="110"/>
+  <line class="g-h" x1="45" y1="120" x2="165" y2="120"/>
+  <line class="g-h" x1="45" y1="130" x2="165" y2="130"/>
+
+  <!-- Vertical construction lines -->
+  <line class="g-v" x1="60"  y1="48" x2="60"  y2="152"/>
+  <line class="g-v" x1="70"  y1="48" x2="70"  y2="152"/>
+  <line class="g-v" x1="80"  y1="48" x2="80"  y2="152"/>
+  <line class="g-v" x1="90"  y1="48" x2="90"  y2="152"/>
+  <line class="g-v" x1="100" y1="48" x2="100" y2="152"/>
+  <line class="g-v" x1="110" y1="48" x2="110" y2="152"/>
+  <line class="g-v" x1="120" y1="48" x2="120" y2="152"/>
+  <line class="g-v" x1="130" y1="48" x2="130" y2="152"/>
+  <line class="g-v" x1="140" y1="48" x2="140" y2="152"/>
+  <line class="g-v" x1="150" y1="48" x2="150" y2="152"/>
+
+  <!-- Golden-ratio circles  center (105, 95)  r₁=45  r₂=28  r₃=17 -->
+  <circle class="phi"   cx="105" cy="95" r="45"/>
+  <circle class="phi phi-2" cx="105" cy="95" r="28"/>
+  <circle class="phi phi-3" cx="105" cy="95" r="17"/>
+
+  <!-- ── LF Monogram ──
+       Module m=10, stroke=9, linecap=round
+       L:  x_start=60, y_start=60   (width=40, height=70)
+           path length = 70+40 = 110
+       F:  x_start=110 (gap=10),    (width=40, height=70)
+           vertical length=70, top=40, mid=30
+  -->
+  <!-- L  (vertical + horizontal base) -->
+  <path class="mk mk-L"  d="M 60,60 L 60,130 L 100,130"/>
+  <!-- F  vertical -->
+  <path class="mk mk-Fv" d="M 110,60 L 110,130"/>
+  <!-- F  top bar -->
+  <path class="mk mk-Ft" d="M 110,60 L 150,60"/>
+  <!-- F  middle bar (at 70% height = 49px → y=109, short 30px) -->
+  <path class="mk mk-Fm" d="M 110,97 L 140,97"/>
+
+  <!-- ── Corner bracket decorations (appear last) ── -->
+  <path class="bracket" d="M 42,52 L 42,44 L 50,44"/>
+  <path class="bracket" d="M 168,44 L 176,44 L 176,52"/>
+  <path class="bracket" d="M 42,148 L 42,156 L 50,156"/>
+  <path class="bracket" d="M 168,156 L 176,156 L 176,148"/>
+
+  <!-- ═══════════════════════════════════════════════════
+       DIVIDER
+  ════════════════════════════════════════════════════ -->
+  <line class="div-line" x1="228" y1="24" x2="228" y2="176"/>
+
+  <!-- ═══════════════════════════════════════════════════
+       RIGHT PANEL  (240–880)  —  text
+  ════════════════════════════════════════════════════ -->
+
+  <!-- Title -->
+  <text class="t-title"
+        x="258" y="95"
+        fill="#F2F2F2"
+        font-size="46"
+        font-weight="700"
+        letter-spacing="7"
+        font-family="'SF Mono','Fira Code','Consolas','Courier New',monospace">LOGO FORGE</text>
+
+  <!-- Subtitle -->
+  <text class="t-sub"
+        x="260" y="125"
+        fill="#E8960F"
+        font-size="12.5"
+        font-weight="400"
+        letter-spacing="4"
+        font-family="'SF Mono','Fira Code','Consolas','Courier New',monospace">PREMIUM SVG IDENTITY SYSTEMS</text>
+
+  <!-- Tag row -->
+  <g class="t-tags">
+    <!-- pip 1 -->
+    <circle class="pip pip-1" cx="260" cy="153" r="2.5" fill="#E8960F"/>
+    <text x="270" y="157"
+          fill="#777"
+          font-size="11.5"
+          letter-spacing="0.5"
+          font-family="'SF Mono','Fira Code','Consolas','Courier New',monospace">Grid-constructed</text>
+
+    <!-- pip 2 -->
+    <circle class="pip pip-2" cx="393" cy="153" r="2.5" fill="#E8960F"/>
+    <text x="403" y="157"
+          fill="#777"
+          font-size="11.5"
+          letter-spacing="0.5"
+          font-family="'SF Mono','Fira Code','Consolas','Courier New',monospace">Gate-verified</text>
+
+    <!-- pip 3 -->
+    <circle class="pip pip-3" cx="510" cy="153" r="2.5" fill="#E8960F"/>
+    <text x="520" y="157"
+          fill="#777"
+          font-size="11.5"
+          letter-spacing="0.5"
+          font-family="'SF Mono','Fira Code','Consolas','Courier New',monospace">Anti-slop</text>
+  </g>
+
+</svg>

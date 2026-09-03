@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Scans the commit message for blocked identifiers.
+# Fires after the editor closes — covers: git commit, git commit --amend,
+# git cherry-pick, git merge, git rebase.
+#
+# Also re-checks identity as belt-and-suspenders (the pre-commit hook runs
+# earlier, but commit-msg fires even when pre-commit is bypassed with --no-verify
+# on the file-scan step — having identity checks here adds a second layer).
+#
+# $1 = path to the file containing the proposed commit message.
+#
+# Activate with: git config core.hooksPath .githooks
+
+BLOCKED_FILE="$(git rev-parse --show-toplevel)/.githooks/.blocked"
+MSG_FILE="$1"
+
+[ -f "$BLOCKED_FILE" ] || exit 0
+[ -f "$MSG_FILE"      ] || exit 0
+
+PAT=$(grep -Ev '^[[:space:]]*(#|$)' "$BLOCKED_FILE" \
+    | tr -d '\r' | tr '\n' '|' | sed 's/|$//')
+[ -n "$PAT" ] || exit 0
+
+FAIL=0
+_block() { printf '  blocked  %s\n' "$*" >&2; FAIL=1; }
+
+# ── 1. Commit message body ─────────────────────────────────────────────────────
+if grep -qiE "$PAT" "$MSG_FILE"; then
+    _block "commit message contains a restricted identifier"
+fi
+
+# ── 2. Resolved identity (covers --amend and any env-override scenarios) ───────
+for _VAR in GIT_AUTHOR_IDENT GIT_COMMITTER_IDENT; do
+    _IDENT=$(git var "$_VAR" 2>/dev/null || true)
+    if printf '%s\n' "$_IDENT" | grep -qiE "$PAT"; then
+        _block "identity  [$_VAR]  $_IDENT"
+    fi
+done
+
+# ── 3. OS env — only when git config is unset (mirrors git's resolution) ──────
+CFG_NAME=$(git config user.name  2>/dev/null || true)
+CFG_EMAIL=$(git config user.email 2>/dev/null || true)
+
+if [ -z "$CFG_NAME" ] || [ -z "$CFG_EMAIL" ]; then
+    OS_USER="${USERNAME:-${USER:-}}"
+    OS_DOMAIN="${USERDOMAIN:-}"
+    OS_HOST="${COMPUTERNAME:-$(hostname -s 2>/dev/null || hostname 2>/dev/null || true)}"
+
+    for _LABEL_VAL in \
+        "USERNAME:$OS_USER" \
+        "USERDOMAIN:$OS_DOMAIN" \
+        "COMPUTERNAME/hostname:$OS_HOST"
+    do
+        _LABEL="${_LABEL_VAL%%:*}"
+        _VAL="${_LABEL_VAL#*:}"
+        [ -z "$_VAL" ] && continue
+        if printf '%s\n' "$_VAL" | grep -qiE "$PAT"; then
+            _block "OS env    [$_LABEL]  $_VAL"
+        fi
+    done
+fi
+
+(( FAIL == 0 )) || {
+    printf '\nCommit blocked — remove or redact restricted content and retry.\n' >&2
+    exit 1
+}
+
+exit 0

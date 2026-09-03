@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# Blocks pushes that would expose personal identifiers in:
+#   - annotated tag tagger line  (name + email embedded in the tag object)
+#   - annotated tag message body
+#   - author/committer identity of every commit in the pushed range
+#
+# Note: git has no pre-tag client-side hook — this pre-push check is the
+# only automatic gate for annotated tags (git tag -a) short of a server-side hook.
+# If you create a tag with a blocked identity you will catch it here at push time.
+#
+# stdin format (one line per ref): <local-ref> <local-sha> <remote-ref> <remote-sha>
+#
+# Activate with: git config core.hooksPath .githooks
+
+BLOCKED_FILE="$(git rev-parse --show-toplevel)/.githooks/.blocked"
+
+[ -f "$BLOCKED_FILE" ] || exit 0
+
+PAT=$(grep -Ev '^[[:space:]]*(#|$)' "$BLOCKED_FILE" \
+    | tr -d '\r' | tr '\n' '|' | sed 's/|$//')
+[ -n "$PAT" ] || exit 0
+
+FAIL=0
+_block() { printf '  blocked  %s\n' "$*" >&2; FAIL=1; }
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+
+    # Skip deletes (local_sha = zeros)
+    [ "$local_sha" = "0000000000000000000000000000000000000000" ] && continue
+
+    OBJ_TYPE=$(git cat-file -t "$local_sha" 2>/dev/null || true)
+
+    if [ "$OBJ_TYPE" = "tag" ]; then
+        # ── Annotated tag ─────────────────────────────────────────────────────
+        # git cat-file -p emits the full tag object:
+        #   object <sha>
+        #   type commit
+        #   tag <name>
+        #   tagger Name <email> <timestamp>   ← personal identity lives here
+        #   <blank line>
+        #   <message body>
+        TAG_OBJ=$(git cat-file -p "$local_sha" 2>/dev/null || true)
+
+        # Check tagger line (name + email)
+        TAGGER=$(printf '%s\n' "$TAG_OBJ" | grep '^tagger ' | head -1)
+        if printf '%s\n' "$TAGGER" | grep -qiE "$PAT"; then
+            _block "annotated tag tagger  [${local_ref##refs/tags/}]  $TAGGER"
+        fi
+
+        # Check tag message body (everything after the first blank line)
+        TAG_MSG=$(printf '%s\n' "$TAG_OBJ" | awk '/^$/{found=1; next} found{print}')
+        if printf '%s\n' "$TAG_MSG" | grep -qiE "$PAT"; then
+            _block "annotated tag message [${local_ref##refs/tags/}]"
+        fi
+
+    else
+        # ── Commit range — check author + committer identity ──────────────────
+        if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+            RANGE="$local_sha"
+        else
+            RANGE="${remote_sha}..${local_sha}"
+        fi
+
+        BAD=$(git log --format="%H  author: %an <%ae>  committer: %cn <%ce>" \
+                "$RANGE" 2>/dev/null \
+            | grep -iE "$PAT" || true)
+
+        if [ -n "$BAD" ]; then
+            while IFS= read -r entry; do
+                _block "commit identity  $entry"
+            done <<< "$BAD"
+        fi
+    fi
+
+done
+
+(( FAIL == 0 )) || {
+    printf '\nPush blocked — restricted content detected (see above).\n' >&2
+    printf 'Fix the identity or content, then retry.\n' >&2
+    exit 1
+}
+
+exit 0

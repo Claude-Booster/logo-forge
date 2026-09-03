@@ -1,0 +1,19 @@
+# Personal identifier block list — one grep-E pattern per line.
+# Copy this file to .githooks/.blocked and fill in your own patterns.
+# .blocked is gitignored and is never committed or pushed.
+#
+# Syntax: extended regular expressions, matched case-insensitively.
+# One pattern per line. Blank lines and lines starting with # are ignored.
+#
+# ── Name variants ──────────────────────────────────────────────────────────
+# Your Name
+# Your\.Lastname
+#
+# ── Email / org ────────────────────────────────────────────────────────────
+# yourname\.handle
+# yourcompany\.com
+# YourCompany
+#
+# ── Username aliases ───────────────────────────────────────────────────────
+# your_username
+# your_alias
