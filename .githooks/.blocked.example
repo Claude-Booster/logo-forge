@@ -1,19 +1,20 @@
-# Personal identifier block list — one grep-E pattern per line.
-# Copy this file to .githooks/.blocked and fill in your own patterns.
-# .blocked is gitignored and is never committed or pushed.
+# Restricted-identifier block list — one grep BRE pattern per line.
+# Copy this file to .githooks/.blocked and replace the labels with real values.
+# .blocked is gitignored and never pushed; these hooks reveal nothing on their own.
 #
-# Syntax: extended regular expressions, matched case-insensitively.
-# One pattern per line. Blank lines and lines starting with # are ignored.
+# Groups (opaque labels — fill in on your machine only):
+#   BLOCKED_NAME_1        e.g. First Last
+#   BLOCKED_NAME_2        e.g. an alias/handle
+#   BLOCKED_EMAIL         e.g. you\.name@example\.com
+#   BLOCKED_ORG           e.g. YourEmployer
+#   BLOCKED_ORG_DOMAIN    e.g. employer\.com
 #
-# ── Name variants ──────────────────────────────────────────────────────────
-# Your Name
-# Your\.Lastname
-#
-# ── Email / org ────────────────────────────────────────────────────────────
-# yourname\.handle
-# yourcompany\.com
-# YourCompany
-#
-# ── Username aliases ───────────────────────────────────────────────────────
-# your_username
-# your_alias
+# Notes:
+#   - Escape regex metacharacters: '.' -> '\.'
+#   - Matching is case-insensitive (grep -i).
+#   - A bare org token (e.g. YourEmployer) already matches its domain substring.
+BLOCKED_NAME_1
+BLOCKED_NAME_2
+BLOCKED_EMAIL
+BLOCKED_ORG
+BLOCKED_ORG_DOMAIN
