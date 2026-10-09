@@ -1,6 +1,9 @@
 # Hook pattern file — never committed
 .githooks/.blocked
 
+# Local Claude Code project settings (machine-specific, not a skill artifact)
+.claude/
+
 # Python
 __pycache__/
 *.py[cod]

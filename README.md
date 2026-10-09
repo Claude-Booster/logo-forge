@@ -21,6 +21,20 @@ The core premise: **scripts hold the line across runs; agent instructions drift.
 
 ---
 
+## Install
+
+Logo Forge is a Claude Code **skill** — Claude Code auto-discovers it, with **no configuration and no build step**. Clone it into your skills directory:
+
+```bash
+git clone https://github.com/Claude-Booster/logo-forge.git ~/.claude/skills/logo-forge
+```
+
+That is the entire install. The next time Claude Code runs, just ask for a logo (see [Trigger Conditions](#trigger-conditions)) and the skill activates — nothing to register, enable, or configure.
+
+**Prerequisite:** Python 3 (standard library only — no `pip install`) for the quality-gate scripts. An SVG rasterizer (`rsvg-convert`, `resvg`, or Inkscape) is **optional** and only needed for PNG/ICO/app-icon export and the automated small-size legibility check; everything else works without it.
+
+---
+
 ## Trigger Conditions
 
 This skill activates automatically when you ask for any of:
@@ -255,17 +269,21 @@ All three scripts report skipped steps explicitly — nothing is silently omitte
 
 ---
 
-## After Cloning
+## Contributing
 
-Run once after cloning:
+**To use the skill you do not need any of this** — the clone in [Install](#install) is enough. This section is only for contributors who will commit changes back to the repo.
+
+Activate the commit-guard hooks once per clone:
 
 ```bash
-./setup.sh
+bash .githooks/setup-hooks.sh        # macOS / Linux / Git Bash
+pwsh -File .githooks/setup-hooks.ps1 # Windows PowerShell
 ```
 
-This sets `core.hooksPath` to `.githooks` and copies `.blocked.example` to `.blocked`. Then edit `.githooks/.blocked` to add your own patterns — it is gitignored and never pushed.
+This points `core.hooksPath` at `.githooks` and seeds the gitignored `.githooks/.blocked` pattern file. The hooks guard commits against leaking personal identifiers and secrets — unrelated to using the skill. Two things to know:
 
-Without `.blocked` the hooks exit silently and impose no restrictions.
+- `master` is **PR-only** (branch-protected; the `verify` check must pass), so land changes via pull request.
+- Commits require [`gitleaks`](https://github.com/gitleaks/gitleaks) on PATH — the hooks are **fail-closed**, so a missing scanner blocks the commit rather than skipping the scan.
 
 ---
 
