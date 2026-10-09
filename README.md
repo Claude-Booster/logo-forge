@@ -31,7 +31,22 @@ git clone https://github.com/Claude-Booster/logo-forge.git ~/.claude/skills/logo
 
 That is the entire install. The next time Claude Code runs, just ask for a logo (see [Trigger Conditions](#trigger-conditions)) and the skill activates — nothing to register, enable, or configure.
 
-**Prerequisite:** Python 3 (standard library only — no `pip install`) for the quality-gate scripts. An SVG rasterizer (`rsvg-convert`, `resvg`, or Inkscape) is **optional** and only needed for PNG/ICO/app-icon export and the automated small-size legibility check; everything else works without it.
+### Requirements
+
+These are **external tools you provide — nothing is bundled with the skill:**
+
+| Tool | Needed for | If missing |
+|------|-----------|------------|
+| **Python 3** — standard library only, no `pip install` | Running the three quality-gate scripts | The deterministic gates (the anti-slop core) can't run — marks could still be hand-authored, but nothing is mechanically verified |
+| **SVG rasterizer** — one of `rsvg-convert`, `resvg`, or Inkscape | `lf_color.py`'s legibility-at-size check and `lf_export.py`'s PNG / ICO / app-icon export | You still get every SVG variant **and** the slop + color hygiene gates — only the rasterized exports are skipped, and each script announces the skip rather than failing silently |
+
+The rasterizer is **optional** — install one only if you want raster (PNG/ICO/app-icon) exports:
+
+```bash
+sudo apt install librsvg2-bin     # Debian/Ubuntu → rsvg-convert
+brew install librsvg              # macOS        → rsvg-convert
+winget install Inkscape.Inkscape  # Windows      → inkscape
+```
 
 ---
 
